@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model AnalysisSession {
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  companyName      String?  @map("company_name")
+  roleTitle        String?  @map("role_title")
+  resumeText       String   @map("resume_text")
+  jobDescription   String   @map("job_description")
+  fitScore         Int      @map("fit_score")
+  summary          String
+  tailoredSummary  String   @map("tailored_summary")
+  source           String   @default("manual")
+  status           String   @default("draft")
+
+  // Relationships
+  skillMatches      SkillMatch[]
+  resumeBullets     ResumeBullet[]
+  interviewQuestions InterviewQuestion[]
+  prepPlanDays      PrepPlanDay[]
+  practiceSessions  PracticeSession[]
+
+  @@map("analysis_sessions")
+}
+
+model SkillMatch {
+  id         String @id @default(cuid())
+  sessionId  String @map("session_id")
+  skillName  String @map("skill_name")
+  type       String // matched or missing
+  weight     Int    @default(1)
+  category   String @default("general")
+
+  session AnalysisSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("skill_matches")
+}
+
+model ResumeBullet {
+  id           String @id @default(cuid())
+  sessionId    String @map("session_id")
+  originalText String @map("original_text")
+  tailoredText String @map("tailored_text")
+  impactScore  Int    @default(0) @map("impact_score")
+  sectionName  String @map("section_name")
+
+  session AnalysisSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("resume_bullets")
+}
+
+model InterviewQuestion {
+  id           String @id @default(cuid())
+  sessionId    String @map("session_id")
+  category     String
+  questionText String @map("question_text")
+  difficulty   String @default("medium")
+  hintText     String? @map("hint_text")
+  orderIndex   Int    @default(0) @map("order_index")
+
+  session AnalysisSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("interview_questions")
+}
+
+model PrepPlanDay {
+  id               String  @id @default(cuid())
+  sessionId        String  @map("session_id")
+  dayNumber        Int     @map("day_number")
+  title            String
+  tasksJson        String  @map("tasks_json") // JSON array of tasks
+  estimatedMinutes Int     @default(60) @map("estimated_minutes")
+  completed        Boolean @default(false)
+
+  session AnalysisSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("prep_plan_days")
+}
+
+model PracticeSession {
+  id                    String    @id @default(cuid())
+  sessionId             String    @map("session_id")
+  startedAt             DateTime  @default(now()) @map("started_at")
+  endedAt               DateTime? @map("ended_at")
+  currentQuestionIndex  Int       @default(0) @map("current_question_index")
+  overallScore          Int       @default(0) @map("overall_score")
+  status                String    @default("active")
+
+  session      AnalysisSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  practiceTurns PracticeTurn[]
+
+  @@map("practice_sessions")
+}
+
+model PracticeTurn {
+  id                     String   @id @default(cuid())
+  practiceSessionId      String   @map("practice_session_id")
+  questionText           String   @map("question_text")
+  answerText             String   @map("answer_text")
+  feedbackStrengths      String   @map("feedback_strengths") // JSON array
+  feedbackImprovements   String   @map("feedback_improvements") // JSON array
+  suggestedAnswer        String?  @map("suggested_answer")
+  score                  Int      @default(0)
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  practiceSession PracticeSession @relation(fields: [practiceSessionId], references: [id], onDelete: Cascade)
+
+  @@map("practice_turns")
+}
+
+model UserPreference {
+  id                        String   @id @default(cuid())
+  theme                     String   @default("system")
+  defaultRole               String?  @map("default_role")
+  defaultCompany            String?  @map("default_company")
+  calendarIntegrationEnabled Boolean @default(false) @map("calendar_integration_enabled")
+  createdAt                 DateTime @default(now()) @map("created_at")
+
+  @@map("user_preferences")
+}
