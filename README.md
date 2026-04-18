@@ -4,8 +4,6 @@
 
 PrepPilot AI is a complete interview preparation platform that transforms static resumes into interactive, personalized preparation systems. Upload your resume, paste a job description, and receive instant fit scores, tailored resume bullets, mock interview sessions, and 7-day prep plans.
 
-![PrepPilot AI Preview](https://via.placeholder.com/800x400/1e1b4b/ffffff?text=PrepPilot+AI+Dashboard)
-
 ## ✨ Features
 
 ### 🎯 **Smart Resume Analysis**
@@ -144,16 +142,12 @@ The application will be available at [http://localhost:3000](http://localhost:30
 ## 🎨 Screenshots
 
 ### Landing Page
-![Landing Page](https://via.placeholder.com/600x400/f8fafc/1e1b4b?text=Landing+Page)
 
 ### Analysis Dashboard  
-![Dashboard](https://via.placeholder.com/600x400/f8fafc/1e1b4b?text=Analysis+Dashboard)
 
 ### Mock Interview
-![Interview](https://via.placeholder.com/600x400/f8fafc/1e1b4b?text=Mock+Interview)
 
 ### Session History
-![History](https://via.placeholder.com/600x400/f8fafc/1e1b4b?text=Session+History)
 
 ## 🏗️ Project Structure
 
